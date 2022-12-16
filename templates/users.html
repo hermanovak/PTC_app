@@ -24,9 +24,18 @@
         {{ form.name.label(class="form-label") }}
         {{ form.name(class="form-control") }}
         <br/>
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control") }}
+        <br/>
         {{ form.submit(class="btn btn-primary") }}
         
     </form>
 
+  <br/><br/><br/>
+  {% for our_user in our_users %}
+      <a href="{{ url_for('update', id=our_user.id) }}"> {{ our_user.name}}</a> - {{ our_user.email }} <br/>
+  {% endfor %}
+
 {% endif %} 
+
 {% endblock %}
