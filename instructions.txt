@@ -1,0 +1,10 @@
+Start app through git:
+
+cd /c/Users/kristyna.hermanova/PTC_app
+source virt/Scripts/activate
+
+pip freeze (to show what is installed in the virtual environment)
+export FLASK_DEBUG=1 (for development mode)
+export FLASK_app="name" [no spaces]
+
+flask run 

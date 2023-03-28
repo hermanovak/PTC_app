@@ -4,46 +4,81 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired 
 from flask_sqlalchemy import SQLAlchemy 
 from datetime import datetime
+from flask_mysqldb import MySQL
+import mysql.connector
+import pymysql
+
+#Connection
+mydb=mysql.connector.connect(host='localhost', user='root', passwd='password123')
+cur = mydb.cursor()
+
+#test
+#cur.execute("show tables in qa_test")
+#for i in cur:
+#    print(i)
+
 
 #Create Flask Instance
 app = Flask(__name__) #helps flask find filse and directory
-#SQLite
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 
-#MySQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password123@localhost/users'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = "Super Key"
-
-#Initialize database
-db = SQLAlchemy(app)
-
-#Create Model
-class Users(db.Model):
-    id = db.Column(db.Integer, primary_key=True) #keep track of users
-    name = db.Column(db.String(120), nullable=False) #can't be blank
-    email = db.Column(db.String(120), nullable=False, unique=True) #unique email
-    date_added = db.Column(db.DateTime, default=datetime.utcnow)
-
-    #Create a string
-    def __repr__(self):     
-        return '<Name %r>' % self.name
-
-with app.app_context():
-    db.create_all()
+#with app.app_context():
+#    db.create_all()
 
 #Create a route decorator
-@app.route('/') #homepage
+@app.route('/', methods = ['GET', 'POST']) #homepage
 def index():
     return render_template("index.html")
 
+#Create a route decorator
+
+@app.route('/weekly', methods = ['GET', 'POST']) #weekly test
+def weekly():
+    return render_template("weekly.html")
+
+@app.route('/monthly', methods = ['GET', 'POST']) #monthly test
+def monthly():
+    return render_template("monthly.html")
+
+##############################################
+
 #Create a Form Class
-class NameForm(FlaskForm):
+class DailyQAForm(FlaskForm):
     name = StringField("Name: ", validators=[DataRequired()])
-    email = StringField("Email: ", validators=[DataRequired()])
+    gantry = StringField("Gantry: ", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+#Create dailyQA form page
+@app.route('/daily', methods = ['GET', 'POST'])
+def daily():
+    name = None
+    gantry = None
+    #form = DailyQAForm()
+    form = request.form
+    #Validate
+    if form.validate_on_submit():
+        #name = daily_test(form.name.data)
+        #gantry = daily_test(form.gantry.data)
+        name = form['name']
+        gantry = form['gantry']
+        cur.execute("INSERT INTO daily_test(Gantry) VALUES (%s, %s)", (gantry))
+        db.connection.commit()
+        cur.close()
+
+        #db.session.add(name,gantry)
+        #db.session.commit()
+        
+        #form.name.data = ''
+        #form.gantry.data = ''
+
+        return "Success"
+
+
+    return render_template("daily.html", 
+        name = name,
+        gantry=gantry,
+        form=form)
+
+
 
 @app.route('/users', methods=['GET', 'POST'])
 def users():
