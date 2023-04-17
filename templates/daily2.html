@@ -1,0 +1,38 @@
+{% extends 'base.html' %} 
+
+{% block content %} 
+
+    <h1>Please complete the Daily QA for GTR2: </h1>
+    <br/>
+    <form method="POST">
+        {{ form.csrf_token }}
+
+        {{ form.hidden_tag() }} 
+
+        {{ form.name.label(
+            class="form-label"
+        ) }}
+        {{ form.name() }}
+        <br/>
+        {{ form.laserx.label }}
+        {{ form.laserx() }} 
+        {{ form.lasery.label }}
+        {{ form.lasery() }}
+        {{ form.laserz.label }}
+        {{ form.laserz() }}
+        <br/>
+        {{ form.gantry.label }}
+        {{ form.gantry() }}
+        <br/>
+        {{ form.temperature.label }}
+        {{ form.temperature() }}
+        <br/>
+        {{ form.pressure.label }}
+        {{ form.pressure() }}
+        <br/>
+        {{ form.submit() }}
+    </form>
+
+
+
+{% endblock %}
